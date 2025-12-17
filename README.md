@@ -150,6 +150,7 @@ openssl rand -base64 32|podman secret create postgres_password -
 echo "postgres://vaultwarden:$(podman secret inspect --showsecret --format '{{.SecretData}}' postgres_password)@vaultwarden-db/vaultwarden" | tr -d '\n' | podman secret create database_url -
 echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4| tr -d '\n' | podman secret create admin_token -
 ```
+To make sure all the secrets are generated, run `podman secret ls`. `postgres_password`, `admin_token`, & `database_url` should show up. 
 
 ## 6. Deploying The Pod
 ```bash
