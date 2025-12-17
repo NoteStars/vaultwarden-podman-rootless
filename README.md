@@ -106,7 +106,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
     - These are parameters for the vaultwarden-app but formatted and used by systemd.
 
 - Create the file `~/.config/containers/systemd/vaultwarden-db.container
-  - ````
+  - ```
     [Container]
     ContainerName=vaultwarden-db
     EnvironmentFile=/home/vaultwarden/vaultwarden/vaultwarden-db.env
@@ -130,17 +130,17 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 
 - Setup the folders:
 
-```
-mkdir -p ~/vaultwarden
-mkdir -p ~/vaultwarden/data
-```
+  - ```
+    mkdir -p ~/vaultwarden
+    mkdir -p ~/vaultwarden/data
+    ```
 
 - Create the environment file - `touch ~/.vaultwarden/vaultwarden-db.env`
 
-```
-POSTGRES_USER=vaultwarden
-POSTGRES_DB=vaultwarden
-```
+  - ```
+    POSTGRES_USER=vaultwarden
+    POSTGRES_DB=vaultwarden
+    ```
 
 To check if its generated use `systemctl --user list-unit-files | grep vaultwarden`
 
@@ -148,9 +148,9 @@ To check if its generated use `systemctl --user list-unit-files | grep vaultward
 * `Failed to start vaultwarden-pod.service: Unit vaultwarden-pod.service not found.` 
     * If the service is not being generated, you can run `/usr/lib/systemd/system-generators/podman-system-generator --user --dryrun`
 
-To reload systemd configuration,
-`systemctl --user daemon-reload`
-`systemctl --user restart vaultwarden-app.service`
+    * To reload systemd configuration,
+     `systemctl --user daemon-reload`
+     `systemctl --user restart vaultwarden-app.service`
 ## Sources
     - [YouTube: Michael Fox - Podman + Quadlet + Ansible: Rootless Service Management](https://www.youtube.com/watch?v=F0hhtDnTVwo)
     - [Documentation: SUSE - Rootless Podman](https://documentation.suse.com/smart/container/pdf/rootless-podman_en.pdf)
