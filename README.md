@@ -33,8 +33,14 @@ You can use the `machinectl` utility by installing the `systemd-container` on Ub
 All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 
 <details>
-<summary>Beginners note for sudo in unpriviledged users:</summary>
-Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following `vaultwarden is not in the sudoers file.` How would we even create new files or directies then? Please note since our users does not have sudo access, we could still write files in our own home directory. You would just simply omit `sudo`.
+<summary>Beginners note for sudo in unprivileged users:</summary>
+
+Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following:
+
+`vaultwarden is not in the sudoers file.`
+
+How would we even create new files or directories then? Please note since our users do not have sudo access, we can still write files in our own home directory. You would just simply omit `sudo`.
+
 </details>
 
      3.1 Create the directory 
