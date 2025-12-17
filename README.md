@@ -51,7 +51,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 - `mkdir -p ~/.config/containers/systemd`
 
 ---
-### 3.2 Create the quadlet file `.pod`
+### 3.2 Create the `.pod` quadlet file
 - `nano ~/.config/containers/systemd/vaultwarden.pod`  
  
 - ```
