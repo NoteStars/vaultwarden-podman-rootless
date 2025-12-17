@@ -54,7 +54,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 ### 3.2 Create the `.pod` quadlet file
 - `nano ~/.config/containers/systemd/vaultwarden.pod`  
  
-- ```
+- ```systemd
   [Pod]
   PodName=vaultwarden
   Network=vaultwarden.network
@@ -68,19 +68,19 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 ---   
 ### 3.4 Making volumes persistent
 - Create the file `~/.config/containers/systemd/vaultwarden-app.volume`
-  ```
+  ```systemd
   [Volume]
   VolumeName=vaultwarden-app
   ```
 - Create the file `~/.config/containers/systemd/vaultwarden-db.volume`
-  ```
+  ```systemd
   [Volume]
   VolumeName=vaultwarden-db
   ```
 ---    
 ### 3.5 Setting the `.container` files
 - Create the file `~/.config/containers/systemd/vaultwarden-app.container`
-  ```
+  ```systemd
   [Container]
   ContainerName=vaultwarden-app
   Environment=ROCKET_PORT=8080
@@ -106,7 +106,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
     - These are parameters for the vaultwarden-app but formatted and used by systemd.
 
 - Create the file `~/.config/containers/systemd/vaultwarden-db.container`
-  - ```
+  - ```systemd
     [Container]
     ContainerName=vaultwarden-db
     EnvironmentFile=/home/vaultwarden/vaultwarden/vaultwarden-db.env
@@ -130,14 +130,14 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 
 - Setup the folders:
 
-  - ```
+  - ```bash
     mkdir -p ~/vaultwarden
     mkdir -p ~/vaultwarden/data
     ```
 
 - Create the environment file - `touch ~/vaultwarden/vaultwarden-db.env`
 
-  - ```
+  - ```bash
     POSTGRES_USER=vaultwarden
     POSTGRES_DB=vaultwarden
     ```
@@ -145,14 +145,14 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 ## 5. Setting up Secrets 
 Setup the following secrets for: `postgres_password`, `database_url` and `admin_token`. This assumes you have `POSTGRES_USER` & `POSTGRES_DB` as `vaultwarden`.
 
-```
+```bash
 openssl rand -base64 32|podman secret create postgres_password -
 echo "postgres://vaultwarden:$(podman secret inspect --showsecret --format '{{.SecretData}}' postgres_password)@vaultwarden-db/vaultwarden" | tr -d '\n' | podman secret create database_url -
 echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4| tr -d '\n' | podman secret create admin_token -
 ```
 
 ## 6. Deploying The Pod
-```
+```bash
 systemctl --user daemon-reload
 systemctl --user start vaultwarden-pod.service
 ```
