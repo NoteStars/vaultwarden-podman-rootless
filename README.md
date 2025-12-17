@@ -84,7 +84,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
   [Container]
   ContainerName=vaultwarden-app
   Environment=ROCKET_PORT=8082
-  Environment=SIGNUPS_ALLOWED=false
+  Environment=SIGNUPS_ALLOWED=true # Set this to false after setting up your first account on Vaultwarden and invite your users through the dashboard
   Environment=LOG_FILE=/data/vaultwarden.log
   HealthCmd=/healthcheck.sh
   HealthInterval=120s
