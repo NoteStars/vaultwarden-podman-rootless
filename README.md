@@ -135,7 +135,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
     mkdir -p ~/vaultwarden/data
     ```
 
-- Create the environment file - `~/vaultwarden/vaultwarden-db.env`
+- Create the environment file `~/vaultwarden/vaultwarden-db.env`
 
   - ```bash
     POSTGRES_USER=vaultwarden
