@@ -78,7 +78,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
   VolumeName=vaultwarden-db
   ```
 ---    
-### 3.5 Setting the `.containers` files
+### 3.5 Setting the `.container` files
 - Create the file `~/.config/containers/systemd/vaultwarden-app.container`
   ```
   [Container]
