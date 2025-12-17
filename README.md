@@ -105,7 +105,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
   ```
     - These are parameters for the vaultwarden-app but formatted and used by systemd.
 
-- Create the file `~/.config/containers/systemd/vaultwarden-db.container
+- Create the file `~/.config/containers/systemd/vaultwarden-db.container`
   - ```
     [Container]
     ContainerName=vaultwarden-db
