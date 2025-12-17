@@ -1,3 +1,5 @@
+![Podman](https://raw.githubusercontent.com/containers/common/main/logos/podman-logo-full-vert.png)
+
 # vaultwarden-podman-rootless
 For more information, I recommend visiting Dani's Garcia on how to officially run Vaultwarden using Podman: [Using Podman](https://github.com/dani-garcia/vaultwarden/wiki/Using-Podman)
 
@@ -32,7 +34,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 
 <details>
 <summary>Beginners note for sudo in unpriviledged users:</summary>
-Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following `vaultwarden is not in the sudoers file.`How would we even create new files or directies then? Please note since our users does not have sudo access, we could still write files in our own home directory. You would just simply omit `sudo`.
+Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following `vaultwarden is not in the sudoers file.` How would we even create new files or directies then? Please note since our users does not have sudo access, we could still write files in our own home directory. You would just simply omit `sudo`.
 </details>
 
      3.1 Create the directory 
@@ -40,11 +42,12 @@ Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following `
      3.2 Create the quadlet file .pod
         - `nano ~/.config/containers/systemd/vaultwarden.pod` 
     
-    
+    ```
     [Pod]
     PodName=vaultwarden
     Network=vaultwarden.network
     PublishPort=8080:8080
+    ```
     
 - 3.3 Define the Pod Network
     - Create the file `~/.config/containers/systemd/vaultwarden.network`
