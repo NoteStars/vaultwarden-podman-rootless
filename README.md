@@ -3,6 +3,8 @@
 # vaultwarden-podman-rootless
 For more information, I recommend visiting Dani's Garcia on how to officially run Vaultwarden using Podman: [Using Podman](https://github.com/dani-garcia/vaultwarden/wiki/Using-Podman)
 
+I created this guide just for beginners to go through, along with the issues that I came across.
+
 ## 1. Create a Non-Root User
 
 `sudo useradd -m vaultwarden`
@@ -35,119 +37,110 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 <details>
 <summary>Beginners note for sudo in unprivileged users:</summary>
 
-Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following:
+* Using `sudo mkdir -p ~/.config/containers/systemd`, we would get the following:
 
-`vaultwarden is not in the sudoers file.`
+     * `vaultwarden is not in the sudoers file.`
 
-How would we even create new files or directories then? Please note since our users do not have sudo access, we can still write files in our own home directory. You would just simply omit `sudo`.
+* How would we even create new files or directories then?
+    * Please note since our users do not have sudo access, we can still write files in our own home directory. You would just simply omit `sudo`.
 
 </details>
 
-     3.1 Create the directory 
-        - `mkdir -p ~/.config/containers/systemd`
-     3.2 Create the quadlet file .pod
-        - `nano ~/.config/containers/systemd/vaultwarden.pod` 
-    
-    ```
-    [Pod]
-    PodName=vaultwarden
-    Network=vaultwarden.network
-    PublishPort=8080:8080
-    ```
-    
-- 3.3 Define the Pod Network
-    - Create the file `~/.config/containers/systemd/vaultwarden.network`
-    ```
-    [Network]
-    NetworkName=vaultwarden
-    Gateway=192.168.220.1
-    Subnet=192.168.220.0/24
+---
+### 3.1 Create the directory 
+- `mkdir -p ~/.config/containers/systemd`
 
+---
+### 3.2 Create the quadlet file .pod
+- `nano ~/.config/containers/systemd/vaultwarden.pod`  
+ 
+- ```
+  [Pod]
+  PodName=vaultwarden
+  Network=vaultwarden.network
+  PublishPort=8080:8080
+  ```
+
+---    
+### 3.3 Define the Pod Network
+- For now, I couldn't get the Podman `.network` file to work. You could refer to the [Podman](https://github.com/dani-garcia/vaultwarden/wiki/Using-Podman) section if you need to define a `.network` file.
+- We will leave out `.network` for this deployment and let [Pasta](https://docs.oracle.com/en/learn/ol-podman-pasta-networking/#introduction) do the work of networking our pod. 
+---   
+### 3.4 Making volumes persistent
+- Create the file `~/.config/containers/systemd/vaultwarden-app.volume`
+  ```
+  [Volume]
+  VolumeName=vaultwarden-app
+  ```
+- Create the file `~/.config/containers/systemd/vaultwarden-db.volume`
+  ```
+  [Volume]
+  VolumeName=vaultwarden-db
+  ```
+---    
+### 3.5 Setting the `.containers` files
+- Create the file `~/.config/containers/systemd/vaultwarden-app.container`
+  ```
+  [Container]
+  ContainerName=vaultwarden-app
+  Environment=ROCKET_PORT=8082
+  Environment=SIGNUPS_ALLOWED=false
+  Environment=LOG_FILE=/data/vaultwarden.log
+  HealthCmd=/healthcheck.sh
+  HealthInterval=120s
+  HealthRetries=10
+  HealthTimeout=45s
+  Image=docker.io/vaultwarden/server:1.34.3 # Use the latest working version
+  Pod=vaultwarden.pod
+  Secret=database_url,type=env,target=DATABASE_URL
+  Secret=admin_token,type=env,target=ADMIN_TOKEN
+  Volume=vaultwarden-app.volume:/data
+  DNS=1.1.1.1
+  [Unit]
+  Requires=vaultwarden-db.service
+  After=vaultwarden-db.service
+
+  [Install]
+  WantedBy=default.target
+  ```
+    - These are parameters for the vaultwarden-app but formatted and used by systemd.
+
+- Create the file `~/.config/containers/systemd/vaultwarden-db.container
+  - ````
+    [Container]
+    ContainerName=vaultwarden-db
+    EnvironmentFile=/home/vaultwarden/vaultwarden/vaultwarden-db.env
+
+    HealthCmd=/usr/bin/pg_isready -q -d vaultwarden -U vaultwarden
+    HealthInterval=120s
+    HealthRetries=10
+    HealthTimeout=45s
+
+    Image=docker.io/library/postgres:17
+    Pod=vaultwarden.pod
+
+    Secret=postgres_password,type=env,target=POSTGRES_PASSWORD
+    Volume=vaultwarden-db.volume:/var/lib/postgresql/data
+
+    [Install]
+    WantedBy=default.target
     ```
-        
-    `Gateway=192.168.220.1` - Router IP inside the new Podman network. Containers will use this as their default gateway.
-    `Subnet=192.168.220.0` - IP range assigned to the network. Containers get IPs like `192.168.220.X`.
-    
-    This will create a private virtual network isolated from the host LAN.
-    Vaultwarden app container and DB container can talk to each other using container IPs, and not `localhost`.
-    
-- 3.4 Making volumes persistent
-    - Create the file `~/.config/containers/systemd/vaultwarden-app.volume`
-        ```
-        [Volume]
-        VolumeName=vaultwarden-app
-        ```
-    - Create the file `~/.config/containers/systemd/vaultwarden-db.volume`
-        ```
-        [Volume]
-        VolumeName=vaultwarden-db
-        ```
-    
-- 3.5 Setting the definition of containers
-    - Create the file `~/.config/containers/systemd/vaultwarden-app.container`
-      ```
-      [Container]
-      ContainerName=vaultwarden-app
-      EnvironmentFile=/home/vaultwarden/vaultwarden/config
       
-      HealthCmd=/healthcheck.sh
-      HealthInterval=120s
-      HealthRetries=10
-      HealthTimeout=45s
-      
-      Image=quay.io/vaultwarden/server
-      
-      Pod=vaultwarden.pod
-      
-      Secret=database_url,type=env,target=DATABASE_URL
-      Secret=admin_token,type=env,target=ADMIN_TOKEN
-      
-      Volume=vaultwarden-app.volume:/data
-      
-      [Unit]
-      Requires=vaultwarden-db.service
-      After=vaultwarden-db.service
+### 4. Configuration 
 
-      [Install]
-      WantedBy=default.target
-      ```
-     
-      These are settings basically for the vaultwarden-app but formatted and used by systemd.
-      
-      Make a new folder ~/vaultwarden/config
-      
-    - Create the file `~/.config/containers/systemd/vaultwarden-db.container`
-      ```
-      [Container]
-      ContainerName=vaultwarden-db
-      EnvironmentFile=/home/vaultwarden/vaultwarden/vaultwarden-db.env
-      
-      HealthCmd=/usr/bin/pg_isready -q -d vaultwarden -U vaultwarden
-      HealthInterval=120s
-      HealthRetries=10
-      HealthTimeout=45s
-      
-      Image=quay.io/library/postgres
-      Pod=vaultwarden.pod
-      
-      Secret=postgres_password,type=env,target=POSTGRES_PASSWORD
-      Volume=vaultwarden-db.volume:/var/lib/postgresql/data
-
-      [Install]
-      WantedBy=default.target
-      ```
-      
-# 4. Configuration 
-
-Setup the folders:
+- Setup the folders:
 
 ```
 mkdir -p ~/vaultwarden
 mkdir -p ~/vaultwarden/data
 ```
 
-`touch ~/.vaultwarden/vaultwarden-db.env`
+- Create the environment file - `touch ~/.vaultwarden/vaultwarden-db.env`
 
+```
+POSTGRES_USER=vaultwarden
+POSTGRES_DB=vaultwarden
+```
 
 To check if its generated use `systemctl --user list-unit-files | grep vaultwarden`
 
