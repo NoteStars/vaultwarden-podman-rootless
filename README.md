@@ -142,8 +142,23 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
     POSTGRES_DB=vaultwarden
     ```
 
+### 5. Setting up Secrets 
+Setup the following secrets for: `postgres_password`, `database_url` and `admin_token`. This assumes you have `POSTGRES_USER` & `POSTGRES_DB` as `vaultwarden`.
+
+```
+openssl rand -base64 32|podman secret create postgres_password -
+echo "postgres://vaultwarden:$(podman secret inspect --showsecret --format '{{.SecretData}}' postgres_password)@vaultwarden-db/vaultwarden" | tr -d '\n' | podman secret create database_url -
+echo -n "MySecretPassword" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4| tr -d '\n' | podman secret create admin_token -
+```
+
+### 6. Deploying The Pod
+```
+systemctl --user daemon-reload
+systemctl --user start vaultwarden-pod.service
+```
 To check if its generated use `systemctl --user list-unit-files | grep vaultwarden`
 
+---
 ### Troubleshooting 
 * `Failed to start vaultwarden-pod.service: Unit vaultwarden-pod.service not found.` 
     * If the service is not being generated, you can run `/usr/lib/systemd/system-generators/podman-system-generator --user --dryrun`
