@@ -167,6 +167,11 @@ To check if its generated use `systemctl --user list-unit-files | grep vaultward
     * To reload systemd configuration,
      `systemctl --user daemon-reload`
      `systemctl --user restart vaultwarden-pod.service`
+---
 ### Sources
 - [YouTube: Michael Fox - Podman + Quadlet + Ansible: Rootless Service Management](https://www.youtube.com/watch?v=F0hhtDnTVwo)
 - [Documentation: SUSE - Rootless Podman](https://documentation.suse.com/smart/container/pdf/rootless-podman_en.pdf)
+---
+### Additional Configurations
+[Backing Up Vaultwarden](https://github.com/NoteStars/vaultwarden-podman-rootless/wiki/Backing-up-Vaultwarden)
+
