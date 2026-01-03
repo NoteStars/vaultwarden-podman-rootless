@@ -64,7 +64,6 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 - ```systemd
   [Pod]
   PodName=vaultwarden
-  Network=vaultwarden.network
   PublishPort=8080:8080
   ```
 
