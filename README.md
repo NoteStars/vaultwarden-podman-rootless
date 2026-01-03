@@ -7,7 +7,7 @@ I created this guide just for beginners to go through, along with the issues tha
 
 ## 1. Create a Non-Root User
 
-`sudo useradd -m vaultwarden`
+`sudo useradd -m -r vaultwarden`
 
 **NOTE:** This user will have no password, no SSH keys, and no sudo access. 
 
