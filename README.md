@@ -20,6 +20,9 @@ I created this guide just for beginners to go through, along with the issues tha
 * **DNS**:
   * We need a DNS package for rootless Podman containers to communicate to each other or else it won't work.
   * `sudo apt install aardvark-dns`
+
+* **Update package repositorities for Podman 5+ on Ubuntu 24.04 LTS or older**:
+  * Before setting up Vaultwarden, follow this guide [here](https://github.com/containers/podman/discussions/25582) by `kolonelkrazy` or else you might get some error messages.
   
 ### Switching Users
 ---
@@ -29,6 +32,10 @@ This has serveal advantages over using `su` to switch users including communicat
 You can use the `machinectl` utility by installing the `systemd-container` on Ubuntu. 
 
 **Command:** `sudo machinectl shell vaultwarden@`
+
+* Set up `subuid` & `subgid`
+* `sudo usermod --add-subuids 100000-165535 vaultwarden`
+* `sudo usermod --add-subgids 100000-165535 vaultwarden`
 
 ## 3. Creating a Pod
 
