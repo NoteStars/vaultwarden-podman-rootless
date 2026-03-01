@@ -1,0 +1,17 @@
+[Container]
+ContainerName=vaultwarden-db
+EnvironmentFile=/home/vaultwarden/vaultwarden/vaultwarden-db.env
+
+HealthCmd=/usr/bin/pg_isready -q -d vaultwarden -U vaultwarden
+HealthInterval=120s
+HealthRetries=10
+HealthTimeout=45s
+
+Image=docker.io/library/postgres:17
+Pod=vaultwarden.pod
+
+Secret=postgres_password,type=env,target=POSTGRES_PASSWORD
+Volume=vaultwarden-db.volume:/var/lib/postgresql/data
+
+[Install]
+WantedBy=default.target
