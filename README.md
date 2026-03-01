@@ -70,7 +70,7 @@ All quadlet files are stored in `~/.config/containers/systemd` as rootless.
 ---    
 ### 3.3 Define the Pod Network
 - For now, I couldn't get the Podman `.network` file to work. You could refer to the [Podman](https://github.com/dani-garcia/vaultwarden/wiki/Using-Podman) section if you need to define a `.network` file.
-- We will leave out `.network` for this deployment and let [Pasta](https://docs.oracle.com/en/learn/ol-podman-pasta-networking/#introduction) do the work of networking our pod. 
+- We will leave out `.network` for this deployment and let [Pasta](https://passt.top/passt/about/) do the work of networking our pod. 
 ---   
 ### 3.4 Making volumes persistent
 - Create the file `~/.config/containers/systemd/vaultwarden-app.volume`
