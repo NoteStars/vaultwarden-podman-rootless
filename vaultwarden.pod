@@ -1,0 +1,3 @@
+[Pod]
+PodName=vaultwarden
+PublishPort=8080:8080
